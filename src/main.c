@@ -1,3 +1,13 @@
+/**
+  * @file main.c
+  * @brief Parallel implementation of the Game of Life using Open MPI.
+  *
+  * @author Dimitris Geromichalos <geromidg@gmail.com>
+  * @date December, 2016
+  */
+
+/******************************** Inclusions *********************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,22 +17,44 @@
 
 #include "utils.h"
 
-/* OpenMP related */
+/***************************** Macro Definitions *****************************/
+
+/** The number of threads to run in OpenMP. */
 #define OMP_THREADS (8u)
 
-/* MPI related */
+/** The number of MPI processes to be spawned. */
 #define NUM_PROCESSES (4u)
 #define MASTER (0u)
 
-/* Game related */
+/** The game's iterations. */
 #define GAME_ITERATIONS (3u)
+/** The board's dimension. */
 #define DIMENSION (400u)
 
-/* Board sizes */
+/**
+  * @defgroup board_size The sizes of the boards and its subboards.
+  *
+  * @{
+  */
 #define TOTAL_ROWS (2u * (DIMENSION))
 #define TOTAL_COLS (2u * (DIMENSION))
 #define TOTAL_SIZE ((TOTAL_ROWS) * (TOTAL_COLS))
 #define SQUARE_SIZE ((TOTAL_SIZE) / (NUM_PROCESSES))
+/** @} */
+
+/************************ Static Function Prototypes *************************/
+
+/**
+  * @brief Plays the game for all the generation in parallel.
+  * @details Communicates with the neighbor processes using messages
+             in order to pass/get the necessary information.
+  * @param pid The pid of the current process.
+  * @param main_board The game's board.
+  * @return Void.
+  */
+static void play_game(int pid, char* main_board);
+
+/***************************** Static Functions ******************************/
 
 void play_game(int pid, char* main_board)
 {
@@ -90,6 +122,8 @@ void play_game(int pid, char* main_board)
     /* Collect subboards from processes to form the final board */
     MPI_Gather(sub_board, SQUARE_SIZE, MPI_CHAR, main_board, SQUARE_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD);
 }
+
+/******************************* Public Functions ****************************/
 
 int main(int argc, char** argv)
 {

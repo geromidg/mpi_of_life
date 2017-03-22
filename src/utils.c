@@ -1,3 +1,13 @@
+/**
+  * @file utils.c
+  * @brief Provides utilities to assist in the implementation of Game of Life.
+  *
+  * @author Dimitris Geromichalos <geromidg@gmail.com>
+  * @date December, 2016
+  */
+
+/******************************** Inclusions *********************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -6,8 +16,32 @@
 
 #include "utils.h"
 
+/************************ Static Function Prototypes *************************/
+
+/**
+  * @brief Adds a number to a board's index in one dimension.
+  * @details Given the board's dimension, a check for overflow is done.
+  * @param i The board's index.
+  * @param a The integer to be added.
+  * @param N The board's dimension.
+  * @return The new index.
+  */
 static int add_index(int i, int a, int N);
+
+/**
+  * @brief Calculates the next state of a board's cell.
+  * @details Following the game's rules, a cell's neighbors are counted
+             in order to determine its next value.
+  * @param board The game's board.
+  * @param i The index of the cell in the first dimension.
+  * @param j The index of the cell in the second dimension.
+  * @param rows The board's number of rows.
+  * @param cols The board's number of columns.
+  * @return The new value of the cell.
+  */
 static char get_next_state(char* board, int i, int j, int rows, int cols);
+
+/***************************** Static Functions ******************************/
 
 int add_index(int i, int a, int N)
 {
@@ -41,6 +75,8 @@ char get_next_state(char* board, int i, int j, int rows, int cols)
 
     return next_state;
 }
+
+/******************************* Public Functions ****************************/
 
 void evolve_board(char* board, char* temp_board, int rows, int cols)
 {
